@@ -16,13 +16,10 @@ contract FundMe {
     AggregatorV3Interface private s_privateFeed;
 
     constructor(address priceFeed) {
-        _owner = msg.sender;
         s_privateFeed = AggregatorV3Interface(priceFeed);
+        _owner = msg.sender;
     }
-    function getVersion() public view returns (uint256) {
-        return s_privateFeed.version();
-    }
-
+ 
     function fund() public payable {
         // Allow users to send $
         // Have a minimum $ sent
@@ -67,4 +64,18 @@ contract FundMe {
         if (msg.sender != _owner) revert OwnerOnly();
         _;
     }
+
+    function getAddressToAmountFunded(address fundingAddress) public view returns(uint256) {
+        return addressToAmountFunded[fundingAddress];
+    }
+
+       function getVersion() public view returns (uint256) {
+        return s_privateFeed.version();
+    }
+
+    function getFunder(uint256 index) public view returns(address) {
+         return funders[index];
+    }
+
+
 }
