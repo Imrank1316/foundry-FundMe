@@ -23,4 +23,17 @@ contract FundFundMe is Script {
     }
 }
 
-contract WithdrawFundMe is Script {}
+contract WithdrawFundMe is Script {
+     function withdrawFundMe(address mostRecentDeployment) public {
+        vm.startBroadcast();
+        FundMe(payable(mostRecentDeployment)).withdraw();
+        vm.stopBroadcast();
+    }
+    function run() external {
+        address mostRecentDeployment = DevOpsTools.get_most_recent_deployment(
+            "FundMe",
+            block.chainid
+        );
+        withdrawFundMe(mostRecentDeployment);
+    }
+}
