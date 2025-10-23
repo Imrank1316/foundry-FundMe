@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 import {Test, console} from "lib/forge-std/src/Test.sol";
-import {FundMe} from "../src/FundMe.sol";
-import {DeployFundMe} from "../script/DeployFundMe.s.sol";
+import {FundMe} from "../../src/FundMe.sol";
+import {DeployFundMe} from "../../script/DeployFundMe.s.sol";
 
 contract FundMeTest is Test {
     FundMe fundme;
@@ -102,6 +102,29 @@ contract FundMeTest is Test {
         uint256 startingFundMeBalance = address(fundme).balance;
         vm.startPrank(fundme.getOwner());
         fundme.withdraw();
+        vm.stopPrank();
+
+        assert(address(fundme).balance == 0);
+        assert(
+            startingOwnerBalance + startingFundMeBalance ==
+                fundme.getOwner().balance
+        );
+    }
+    // testing cheaper withdraw function
+
+        function testWithdrawfromMultiFundersCheaper() public funded {
+        uint160 numberOfFunderIndex = 10;
+        uint160 startingfunderIndex = 1;
+
+        for (uint160 i = startingfunderIndex; i < numberOfFunderIndex; i++) {
+            hoax(address(i), SEND_VALUE);
+            fundme.fund{value: SEND_VALUE}();
+        }
+
+        uint256 startingOwnerBalance = fundme.getOwner().balance;
+        uint256 startingFundMeBalance = address(fundme).balance;
+        vm.startPrank(fundme.getOwner());
+        fundme.cheaperWithDraw();
         vm.stopPrank();
 
         assert(address(fundme).balance == 0);
