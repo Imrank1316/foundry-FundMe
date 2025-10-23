@@ -11,7 +11,7 @@ contract FundMe {
 
     mapping(address funder => uint256 amountFunded)  public addressToAmountFunded;
        
-    address public immutable _owner;
+    address private immutable _owner;
 
     AggregatorV3Interface private s_privateFeed;
 
@@ -37,7 +37,7 @@ contract FundMe {
     function withdraw() public ownerOnly {
         for (
             uint256 funderIndex = 0;
-            funderIndex <= funders.length;
+            funderIndex < funders.length;
             funderIndex++
         ) {
             address funder = funders[funderIndex];
@@ -75,6 +75,10 @@ contract FundMe {
 
     function getFunder(uint256 index) public view returns(address) {
          return funders[index];
+    }
+
+    function getOwner() external view returns(address) {
+        return _owner;
     }
 
 
